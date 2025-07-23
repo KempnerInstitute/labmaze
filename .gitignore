@@ -10,3 +10,6 @@
 build/
 dist/
 bazel-out
+
+.vscode
+__pycache__
