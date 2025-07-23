@@ -40,6 +40,7 @@ ext_modules = [
         ],
         include_dirs=[
             pybind11.get_include(),
+            os.path.join(root, "src"),
             base_cc,
             os.path.join(base_cc, "python"),
             root
@@ -54,6 +55,7 @@ ext_modules = [
         ],
         include_dirs=[
             pybind11.get_include(),
+            os.path.join(root, "src"),
             base_cc,
             os.path.join(base_cc, "python"),
             root
