@@ -26,7 +26,8 @@ class BaseMaze(metaclass=abc.ABCMeta):
     """Regenerates the maze if required."""
     pass
 
-  @abc.abstractproperty
+  @property
+  @abc.abstractmethod
   def entity_layer(self):
     """The entity layer of the current maze.
 
@@ -38,7 +39,8 @@ class BaseMaze(metaclass=abc.ABCMeta):
       A 2-dimensional NumPy array of printable characters.
     """
 
-  @abc.abstractproperty
+  @property
+  @abc.abstractmethod
   def variations_layer(self):
     """The variations layer of the current maze.
 
@@ -52,11 +54,13 @@ class BaseMaze(metaclass=abc.ABCMeta):
       A 2-dimensional NumPy array of printable characters.
     """
 
-  @abc.abstractproperty
+  @property
+  @abc.abstractmethod
   def height(self):
     """The number of cells along the y-direction of this maze."""
 
-  @abc.abstractproperty
+  @property
+  @abc.abstractmethod
   def width(self):
     """The number of cells along the x-direction of this maze."""
 
