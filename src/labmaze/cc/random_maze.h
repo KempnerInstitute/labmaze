@@ -18,8 +18,8 @@
 
 #include <random>
 #include <string>
+#include <string_view>
 
-#include "absl/strings/string_view.h"
 #include "labmaze/cc/algorithm.h"
 #include "labmaze/cc/text_maze.h"
 
@@ -37,8 +37,8 @@ class RandomMaze {
                       int max_rooms, int room_min_size, int room_max_size,
                       int retry_count, double extra_connection_probability,
                       int max_variations, bool has_doors, bool simplify,
-                      int spawns_per_room, absl::string_view spawn_token,
-                      int objects_per_room, absl::string_view object_token,
+                      int spawns_per_room, std::string_view spawn_token,
+                      int objects_per_room, std::string_view object_token,
                       std::mt19937_64::result_type random_seed);
 
   // Generates a new random maze.

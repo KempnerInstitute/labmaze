@@ -17,19 +17,35 @@
 
 #include <algorithm>
 #include <functional>
+#include <string_view>
+#include <sstream>
 
 #include "logging.h"
-#include "absl/strings/str_split.h"
-#include "absl/strings/string_view.h"
 
 namespace deepmind {
 namespace labmaze {
 
+inline std::vector<std::string_view> SplitNonEmptyLines(const std::string& text) {
+  std::vector<std::string_view> lines;
+  size_t start = 0;
+  size_t end = 0;
+  while (end != std::string::npos) {
+    end = text.find('\n', start);
+    size_t length = (end == std::string::npos) ? std::string::npos : end - start;
+    std::string_view line = text.substr(start, length);
+    if (!line.empty()) {
+      lines.push_back(line);
+    }
+    start = (end == std::string::npos) ? std::string::npos : end + 1;
+  }
+  return lines;
+}
+
 CharGrid::CharGrid(std::string text)
     : raw_data_(std::move(text)),
-      rows_(absl::StrSplit(raw_data_, '\n', absl::SkipEmpty())) {
+      rows_(SplitNonEmptyLines(raw_data_)) {
   auto it = std::max_element(rows_.begin(), rows_.end(),
-                             [](absl::string_view lhs, absl::string_view rhs) {
+                             [](std::string_view lhs, std::string_view rhs) {
                                return lhs.size() < rhs.size();
                              });
   CHECK(it != rows_.end());
