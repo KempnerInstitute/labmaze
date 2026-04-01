@@ -7,27 +7,11 @@ on:
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-22.04, macos-13, macos-14]
+    name: Build wheels on ubuntu-22.04
+    runs-on: ubuntu-22.04
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install Bazel (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get install -y apt-transport-https curl gnupg
-          curl -fsSL https://bazel.build/bazel-release.pub.gpg | gpg --dearmor > bazel-archive-keyring.gpg
-          sudo mv bazel-archive-keyring.gpg /usr/share/keyrings/
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/bazel-archive-keyring.gpg] https://storage.googleapis.com/bazel-apt stable jdk1.8" | sudo tee /etc/apt/sources.list.d/bazel.list
-          sudo apt-get update && sudo apt-get install -y bazel
-
-      - name: Install Bazel (macOS)
-        if: runner.os == 'macOS'
-        run: brew install bazel
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.21
@@ -35,17 +19,16 @@ jobs:
           CIBW_BUILD: cp310-* cp311-* cp312-*
           CIBW_SKIP: "*-win32 *-musllinux*"
           CIBW_ARCHS_LINUX: x86_64
-          CIBW_ARCHS_MACOS: auto
           CIBW_MANYLINUX_X86_64_IMAGE: manylinux_2_28
-          CIBW_BEFORE_ALL_LINUX: >
-            yum install -y java-11-openjdk &&
-            curl -Lo /usr/local/bin/bazel https://github.com/bazelbuild/bazel/releases/download/6.4.0/bazel-6.4.0-linux-x86_64 &&
+          CIBW_BEFORE_ALL_LINUX: |
+            yum install -y java-11-openjdk-devel wget
+            wget -q https://github.com/bazelbuild/bazel/releases/download/6.4.0/bazel-6.4.0-linux-x86_64 -O /usr/local/bin/bazel
             chmod +x /usr/local/bin/bazel
-          CIBW_ENVIRONMENT: PATH="/usr/local/bin:$PATH"
+            bazel version
 
       - uses: actions/upload-artifact@v4
         with:
-          name: wheels-${{ matrix.os }}
+          name: wheels
           path: ./wheelhouse/*.whl
 
   release:
@@ -56,8 +39,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          pattern: wheels-*
-          merge-multiple: true
+          name: wheels
           path: dist/
 
       - name: Create GitHub Release
